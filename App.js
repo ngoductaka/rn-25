@@ -249,7 +249,7 @@ const Count = () => {
           }} onPress={() => { }}>
             <Text style={{ color: '#111', fontWeight: '600', fontSize: 28 }} >F</Text>
           </TouchableOpacity>
-          {/* <Icon name="rocket" size={30} color="#4F8EF7" /> */}
+          <Icon name="rocket" size={30} color="#4F8EF7" />
 
         </View>
         <View style={{ flex: 3, justifyContent: 'center', paddingHorizontal: 20 }}>
@@ -286,7 +286,7 @@ const Count = () => {
   );
 };
 
-
+export default Count;
 const Input = ({ label = 'Username', placeholder = '', layoutStyle = {}, secureTextEntry = false }) => {
   return (
     <View style={{ paddingHorizontal: 10, ...layoutStyle }}>
@@ -474,4 +474,4 @@ const ListView = () => {
   )
 }
 
-export default React.memo(ListView);
+// export default React.memo(ListView);
