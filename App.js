@@ -1,285 +1,178 @@
-import React, { useState, useRef } from 'react';
-import {
-  View, // div
-  Text, // span
-  StyleSheet, // chứa css styles
-  TextInput, // input
-  Image,
-  //  click event <=> press event
-  Touchable,
-  TouchableOpacity,
-  Button,
-  Pressable,
-  // scroll or render list
-  ScrollView,
-  FlatList,
-  //
-  SafeAreaView,
-  StatusBar,
-  //
-  Platform,
-  //
-  Dimensions,
-  Alert,
-  //
-  Animated,
-} from 'react-native';
+import React, { useState, useEffect, createContext, useContext } from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import Feather from 'react-native-vector-icons/Feather';
 
-import InputScrollView from 'react-native-input-scroll-view';
+import { View, Text, Button } from 'react-native';
 
-import axios from 'axios';
+import Login from './src/screen/login'
+// import Home from './src/screen/home'
 
-const { height, width } = Dimensions.get('window');
+const Tab = createBottomTabNavigator();
 
-import LinearGradient from 'react-native-linear-gradient';
+const Stack = createNativeStackNavigator();
 
-function App() {
-  const [username, setUsername] = React.useState('');
-  const [password, setPassword] = React.useState('');
+const Detail = () => (
+  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <Text>Detail screen</Text>
+  </View>
+)
 
-  const _handleLogin = async () => {
-    console.log('dddd');
-    try {
-      // http code dau 2xx
-      const payload = {
-        name: username,
-        password: password,
-      };
-      console.log('payload', payload);
-      const { data } = await axios.post('http://localhost:3000/login', payload);
-      Alert.alert(data.message);
-      // AsyncStorage.setItem('token', data.token);
-      // AsyncStorage.setItem('user', JSON.stringify(data.user));
-      // navigate.navigate('Home');
-    } catch (err) {
-      // rest
-      console.log('asdfasdf', err);
-    }
-  };
+const HomeStack = () => (
+  <Stack.Navigator >
+    <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
+    <Stack.Screen name="Detail" component={Detail} options={{ headerShown: false }} />
+  </Stack.Navigator>
+)
+const InAppRouter = () => (
+  <Tab.Navigator
+    screenOptions={({ route }) => ({
+      tabBarIcon: ({ focused, color, size }) => {
+        let iconName;
+        if (route.name === 'Home') {
+          iconName = focused
+            ? 'home'
+            : 'home-outline';
+        } else if (route.name === 'Settings') {
+          iconName = focused ? 'settings' : 'settings-outline';
+        }
+        else if (route.name === 'Order') {
+          return focused ? <FontAwesome size={size} color={color} name="shopping-cart" /> : <Feather name="shopping-cart" size={size} color={color} />;
+        }
+        // You can return any component that you like here!
+        return <Ionicons name={iconName} size={size} color={color} />;
+      },
+      tabBarActiveTintColor: 'tomato',
+      tabBarInactiveTintColor: 'gray',
+    })}
+  >
+    <Tab.Screen name="Home" component={HomeStack}
+      options={{ headerShown: false }}
+    />
+    <Tab.Screen name="Settings" component={Settings} />
+    <Tab.Screen name="Order" component={Order} options={{ tabBarBadge: 3 }} />
+  </Tab.Navigator>
+)
 
+const AuthRouter = () => (
+  <Stack.Navigator >
+    <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+    {/* <Stack.Screen name="Login" component={Login} /> */}
+  </Stack.Navigator>
+)
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case 'check_login': // action 
+      return {
+        ...state,
+        isSignIn: action.isSignIn,
+        loading: action.loading,
+      }
+    case 'login_success': // action 
+      return {
+        ...state,
+        isSignIn: true,
+        user: action.user
+      }
+    case 'logout_user': // action 
+      return {
+        ...state,
+        isSignIn: false,
+        user: {}
+      }
+    default:
+      return state;
+  }
+}
+export const AppState = createContext();
+export default function App() {
+  // state for sign in
+  const [state, dispatch] = React.useReducer(reducer, {
+    isSignIn: false,
+    loading: false,
+  });
+  const { isSignIn, loading } = state
+
+  useEffect(() => {
+    setTimeout(() => {
+      // action 
+      // if (1) { // check user login 
+      //   // case user not logged in
+      //   dispatch({
+      //     type: 'check_login',
+      //     isSignIn: false,
+      //     loading: false,
+      //   });
+      // }
+    }, 1000 * 2);
+  }, []);
+
+  if (loading) {
+    return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <Text>Loading...</Text>
+    </View>
+  }
   return (
-    <LinearGradient
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      colors={['#642B73', '#3b5998', '#C6426E']}
-      style={styles.linearGradient}>
-      <InputScrollView>
-        <View style={styles.wrap}>
-          <View style={{ alignItems: 'center' }}>
-            <Text style={styles.headerText}>Welcome back</Text>
-            <Text style={styles.subHeader}>Login to continue</Text>
-          </View>
-          <TextInput
-            style={styles.input}
-            placeholder="Username"
-            value={username}
-            onChangeText={e => {
-              console.log(e);
-              setUsername(e);
-            }}
-          />
-          <TextInput
-            style={styles.input}
-            secureTextEntry={true}
-            placeholder="Password"
-            value={password}
-            onChangeText={e => setPassword(e)}
-          />
-          <BtnLiner text="Login000" onPress={() => _handleLogin()} />
-          <TouchableOpacity
-            onPress={() => {
-              // navigate.navigate('Register');
-            }}
-            style={styles.register}>
-            <Text style={styles.registerText}>Create account</Text>
-          </TouchableOpacity>
-        </View>
-      </InputScrollView>
-    </LinearGradient>
+    <AppState.Provider value={{ state, dispatch }}>
+      <NavigationContainer>
+        {
+          isSignIn ?
+            <InAppRouter /> :
+            <AuthRouter />
+        }
+      </NavigationContainer>
+    </AppState.Provider>
   );
 }
 
-const BtnLiner = ({ text = '', onPress }) => {
-  return (
-    <LinearGradient
-      start={{ x: 0, y: 0 }}
-      end={{ x: 1, y: 1 }}
-      colors={['#f12711', '#f5af19']}
-      style={stylesBtn.btn}>
-      <TouchableOpacity onPress={onPress} style={stylesBtn.loginBtn}>
-        <Text>{text}</Text>
-      </TouchableOpacity>
-    </LinearGradient>
-  );
-};
 
-const shawDowStyle = {
-  shadowColor: '#000',
-  shadowOffset: {
-    width: 0,
-    height: 3,
-  },
-  shadowOpacity: 0.27,
-  shadowRadius: 4.65,
+const Home = ({ navigation }) => {
+  const { dispatch, state } = useContext(AppState);
+  return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <Text>Welcome back ({state?.user?.name})</Text>
+    <Button
+      title="Logout"
+      onPress={() => {
+        dispatch({
+          type: 'logout_user',
+          isSignIn: false,
+        })
+      }}
+    />
 
-  elevation: 6,
-};
+  </View>
+}
+const Settings = ({ navigation }) => {
+  return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <Text>Detail</Text>
+    <Button
+      title="Go to Order"
+      onPress={() => navigation.navigate('Order')}
+    />
+  </View>
+}
+const Order = ({ navigation }) => {
+  return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+    <Text>Order</Text>
+    <Button
+      title="Go back home"
+      onPress={() => navigation.popToTop()}
+    />
+  </View>
+}
+//
 
-const stylesBtn = StyleSheet.create({
-  btn: {
-    marginTop: 30,
-    borderRadius: 10,
-    ...shawDowStyle,
-  },
-  loginBtn: {
-    paddingVertical: 10,
-    paddingHorizontal: 40,
-  },
-});
+// const authRouter
 
-// Later on in your styles..
-var styles = StyleSheet.create({
-  linearGradient: {
-    flex: 1,
-    paddingLeft: 15,
-    paddingRight: 15,
-  },
-  scrollView: {
-    flex: 1,
-    // alignItems: 'center', justifyContent: 'center'
-  },
-  buttonText: {
-    fontSize: 18,
-    fontFamily: 'Gill Sans',
-    textAlign: 'center',
-    margin: 10,
-    color: '#ffffff',
-    backgroundColor: 'transparent',
-  },
-  wrap: {
-    // width: '100%',
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: height,
-    // marginTop: 400,
-  },
-  input: {
-    borderColor: 'gray',
-    width: '100%',
-    borderWidth: 1,
-    borderRadius: 10,
-    padding: 10,
-    marginTop: 8,
-    backgroundColor: '#fefefe',
-    ...shawDowStyle,
-  },
-  register: {
-    marginTop: 20,
-  },
-  registerText: {
-    color: '#fff',
-  },
-  headerText: {
-    fontSize: 25,
-    marginBottom: 15,
-    color: '#fff',
-  },
-  subHeader: {
-    fontSize: 14,
-    marginBottom: 15,
-    color: '#fff',
-  },
-});
+// 1 router 
 
-// export default App;
+// - setup , kiến trúc 1 flow về authen 
+// kiến trúc router trong app thông thường
 
-// state
-// props
-
-const Count = () => {
-  const [
-    count, // state value
-    setCount, // setter function
-  ] = useState(0); // default value = 0
-
-  return (
-    <View style={countStyles.container}>
-      <View style={{ flex: 1, backgroundColor: 'red', flexDirection: 'row' }}>
-        <View style={{ flex: 1, backgroundColor: 'pink' }}>
-        </View><View style={{ flex: 1, backgroundColor: '#0947' }}>
-        </View><View style={{ flex: 1, backgroundColor: '#958' }}>
-        </View>
-      </View>
-      <View style={{
-        flex: 2,
-        backgroundColor: 'blue',
-        justifyContent: 'center', // truc chinh (chieu doc)
-        // flex-start (default) flex-end center space-between space-around space-evenly
-        alignItems: 'center', // truc chinh (chieu doc)
-        // flex-start flex-end center baseline stretch (default)
-      }}>
-        <Text style={countStyles.textStyle}>Count: {count}</Text>
-        <Text style={countStyles.textStyle}>Count: {count}</Text>
-        <Text style={countStyles.textStyle}>Count: {count}</Text>
-      </View>
-      <View style={{ flex: 1, backgroundColor: 'green' }}></View>
-
-    </View>
-  );
-};
-
-const RenderText = ({ initCount, children }) => {
-  const [
-    count, // state value
-    setCount, // setter function
-  ] = useState(initCount); // default value = 0
-  // let data = 23;
-
-  React.useEffect( // effect (props and state)
-    () => {
-      // logic
-      console.log('useEffect');
-      // setCount(initCount);
-    },
-    // 
-    [] // react lifecycle 
-  );
-  // btvn 
-  // React.useMemo() 
-  // React.useCallback() 
-  // React.memo() 
-
-
-  return (
-    <>
-      <Text style={countStyles.textStyle}>Count: {count}</Text>
-      {children}
-      <Button title="Increment inner RenderText" onPress={() => setCount(state => state + 1)} />
-    </>
-  )
-};
-
-const countStyles = StyleSheet.create({
-  container: { flex: 1 },
-  textStyle: {
-    fontSize: 19,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    color: 'red',
-  },
-});
-
-export default React.memo(Count);
-
-
-// state props 
-// useEffect
-// btvn 
-
-  // React.useMemo()
-  // React.useCallback()
-  // React.memo() 
-
-  // styles flex 
-  // css
+// 2 useReducer context react 
+// useReducer cách react quản lý state phức tạp
+// context react truyền dữ liệu xuống các component con cháu 
