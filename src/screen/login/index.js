@@ -51,15 +51,27 @@ function App() {
     console.log('dddd');
     try {
       // http code dau 2xx
+      // const payload = {
+      //   // name: username,
+      //   // password: password,
+      //   password: "Admin@123",
+      //   username: "admin",
+      // };
+      // console.log('payload', payload);
+
+      // const { data } = await axios.post('https://india.rosoee.com:3201/v1/user/login', payload);
+      // console.log('data', data);
+
+
       const payload = {
         name: username,
         password: password,
       };
       console.log('payload', payload);
-   
-      const { data } = await axios.post('http://localhost:3000/login', payload);
+
+      const { data } = await axios.post('http://192.168.12.104:3000/login', payload);
       console.log('data', data);
-    
+
       // Alert.alert(data.message);
       // AsyncStorage.setItem('token', data.token);
       // AsyncStorage.setItem('user', JSON.stringify(data.user));

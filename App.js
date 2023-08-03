@@ -9,7 +9,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import { View, Text, Button } from 'react-native';
 
 import Login from './src/screen/login'
-// import Home from './src/screen/home'
+import HomeScreen from './src/screen/home'
 
 const Tab = createBottomTabNavigator();
 
@@ -23,7 +23,7 @@ const Detail = () => (
 
 const HomeStack = () => (
   <Stack.Navigator >
-    <Stack.Screen name="Home" component={Home} options={{ headerShown: false }} />
+    <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
     <Stack.Screen name="Detail" component={Detail} options={{ headerShown: false }} />
   </Stack.Navigator>
 )

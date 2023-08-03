@@ -51,6 +51,10 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Get image for avatar</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Get image for avatar</string>
 	<key>UIAppFonts</key>
 	<array>
 	<string>AntDesign.ttf</string>
