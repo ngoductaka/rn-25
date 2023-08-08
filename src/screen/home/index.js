@@ -1,7 +1,6 @@
 import React from 'react'
 import { View, Text, TouchableOpacity, Image, Button, Platform } from 'react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
-import axios from 'axios';
 
 const App = () => {
     const [image, setImage] = React.useState(null);

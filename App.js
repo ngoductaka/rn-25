@@ -5,11 +5,13 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Feather from 'react-native-vector-icons/Feather';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { View, Text, Button } from 'react-native';
 
 import Login from './src/screen/login'
 import HomeScreen from './src/screen/home'
+import Profile from './src/screen/profile'
 
 const Tab = createBottomTabNavigator();
 
@@ -41,6 +43,8 @@ const InAppRouter = () => (
         }
         else if (route.name === 'Order') {
           return focused ? <FontAwesome size={size} color={color} name="shopping-cart" /> : <Feather name="shopping-cart" size={size} color={color} />;
+        } else if (route.name === 'Profile') {
+          return focused ? <FontAwesome size={size} color={color} name="user-circle" /> : <FontAwesome name="user-circle" size={size} color={color} />;
         }
         // You can return any component that you like here!
         return <Ionicons name={iconName} size={size} color={color} />;
@@ -54,6 +58,7 @@ const InAppRouter = () => (
     />
     <Tab.Screen name="Settings" component={Settings} />
     <Tab.Screen name="Order" component={Order} options={{ tabBarBadge: 3 }} />
+    <Tab.Screen options={{ headerShown: false }} name="Profile" component={Profile} />
   </Tab.Navigator>
 )
 
@@ -66,6 +71,18 @@ const AuthRouter = () => (
 
 const reducer = (state, action) => {
   switch (action.type) {
+    case 'auto_login_success': // action
+      return {
+        ...state,
+        isSignIn: true,
+        loading: false,
+      }
+    case 'auto_login_false': // action
+      return {
+        ...state,
+        isSignIn: false,
+        loading: false,
+      }
     case 'check_login': // action 
       return {
         ...state,
@@ -93,22 +110,30 @@ export default function App() {
   // state for sign in
   const [state, dispatch] = React.useReducer(reducer, {
     isSignIn: false,
-    loading: false,
+    loading: true,
   });
   const { isSignIn, loading } = state
 
   useEffect(() => {
-    setTimeout(() => {
-      // action 
-      // if (1) { // check user login 
-      //   // case user not logged in
-      //   dispatch({
-      //     type: 'check_login',
-      //     isSignIn: false,
-      //     loading: false,
-      //   });
-      // }
-    }, 1000 * 2);
+    AsyncStorage.getItem('token')
+      .then((token) => {
+        if (token) {
+          dispatch({
+            type: 'auto_login_success',
+          })
+
+        } else {
+          dispatch({
+            type: 'auto_login_false',
+          })
+        }
+
+      })
+      .catch((error) => {
+        dispatch({
+          type: 'auto_login_false',
+        })
+      })
   }, []);
 
   if (loading) {

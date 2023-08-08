@@ -27,6 +27,7 @@ import {
 import Icon from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 import InputScrollView from 'react-native-input-scroll-view';
@@ -69,16 +70,18 @@ function App() {
       };
       console.log('payload', payload);
 
-      const { data } = await axios.post('http://192.168.12.104:3000/login', payload);
+      const { data } = await axios.post('http://localhost:3000/login', payload);
       console.log('data', data);
 
       // Alert.alert(data.message);
-      // AsyncStorage.setItem('token', data.token);
-      // AsyncStorage.setItem('user', JSON.stringify(data.user));
+      AsyncStorage.setItem('token', data.token);
+      AsyncStorage.setItem('user', JSON.stringify(data.user));
       // navigate.navigate('Home');
+
       dispatch({
         type: 'login_success',
-        user: data.user
+        user: data.user,
+        // user: payload,
       })
     } catch (err) {
       // rest
