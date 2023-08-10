@@ -46,7 +46,6 @@ function App() {
 
 
   const { dispatch, state } = useContext(AppState);
-  console.log('state_login_page', state);
 
   const _handleLogin = async () => {
     console.log('dddd');

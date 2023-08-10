@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext } from 'react';
+import React, { useState, useRef, useContext, useEffect } from 'react';
 import {
   View, // div
   Text, // span
@@ -51,6 +51,18 @@ function App() {
   const [sex, setSex] = React.useState(''); // input select
   const [active, setActive] = React.useState(true); // input switch
   const [age, setAge] = React.useState(true); // input number
+
+  const fadeAnim = React.useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 1000 * 5,
+    }).start();
+
+  }, [])
+
 
 
   const { dispatch, state } = useContext(AppState);
@@ -115,25 +127,107 @@ function App() {
       style={styles.linearGradient}>
       <InputScrollView>
         <View style={styles.wrap}>
-          <View style={{
+
+          <Animated.View style={{
             position: 'absolute',
-            top: -width / 2.5,
-            right: -width / 2,
-            height: width, width, borderRadius: width, backgroundColor: 'red'
+            top: width,
+            right: fadeAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [-width, -width / 2],
+            }),
+            top: fadeAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [-width, -width / 2.5],
+            }),
+
+            height: fadeAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, width],
+            }),
+
+            width: fadeAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, width],
+            }),
+
+            borderRadius: fadeAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, width],
+            }),
+            backgroundColor: 'red'
           }} />
 
-          <View style={{
+
+          <Animated.View style={{
             position: 'absolute',
-            top: -width / 2,
-            right: -width / 3,
-            height: width, width, borderRadius: width, backgroundColor: 'green'
+
+            // top: -width / 2,
+            // right: -width / 3,
+            // height: width, width, borderRadius: width,
+
+
+
+            right: fadeAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [-width, -width / 3],
+            }),
+            top: fadeAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [-width, -width / 2],
+            }),
+
+            height: fadeAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, width],
+            }),
+
+            width: fadeAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, width],
+            }),
+
+            borderRadius: fadeAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, width],
+            }),
+
+
+            backgroundColor: 'green'
           }} />
 
-          <View style={{
+          <Animated.View style={{
             position: 'absolute',
-            top: -width / 1.5,
-            left: 0,
-            height: width, width, borderRadius: width, backgroundColor: '#fff'
+            // top: -width / 1.5,
+            // left: 0,
+            // height: width, width, borderRadius: width,
+
+
+
+            left: fadeAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [-width, 0],
+            }),
+            top: fadeAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [-width, -width / 1.5],
+            }),
+
+            height: fadeAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, width],
+            }),
+
+            width: fadeAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, width],
+            }),
+
+            borderRadius: fadeAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [0, width],
+            }),
+            
+            backgroundColor: '#fff'
           }} />
 
           <View style={{
