@@ -8,6 +8,9 @@ import Feather from 'react-native-vector-icons/Feather';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { View, Text, Button } from 'react-native';
+import { Provider } from 'react-redux';
+import { store } from './src/redux/store';
+
 
 import Login from './src/screen/login'
 import HomeScreen from './src/screen/home'
@@ -141,16 +144,19 @@ export default function App() {
       <Text>Loading...</Text>
     </View>
   }
+  // context react
   return (
-    <AppState.Provider value={{ state, dispatch }}>
-      <NavigationContainer>
-        {
-          isSignIn ?
-            <InAppRouter /> :
-            <AuthRouter />
-        }
-      </NavigationContainer>
-    </AppState.Provider>
+    <Provider store={store}>
+      <AppState.Provider value={{ state, dispatch }}> 
+        <NavigationContainer>
+          {
+            isSignIn ?
+              <InAppRouter /> :
+              <AuthRouter />
+          }
+        </NavigationContainer>
+      </AppState.Provider>
+    </Provider>
   );
 }
 
